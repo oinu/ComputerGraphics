@@ -8,7 +8,7 @@
 
 using namespace std;
 const GLint WIDTH = 800, HEIGHT = 600;
-bool WIDEFRAME = false;
+bool WIDEFRAME = true;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 

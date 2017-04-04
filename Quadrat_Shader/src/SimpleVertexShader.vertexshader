@@ -19,6 +19,14 @@ void main(){
 		{
 			gl_Position.x=-0.9;
 		}
+		else if(gl_Position.x>-0.5 && gl_Position.x<0)
+		{
+			gl_Position.x=-0.5;
+		}
+		else if(gl_Position.x<0.5 && gl_Position.x>0)
+		{
+			gl_Position.x=0.5;
+		}
 		
 	}
     gl_Position.w = 1.0;
