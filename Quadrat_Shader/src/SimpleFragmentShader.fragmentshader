@@ -1,12 +1,20 @@
 #version 330 core
 
+in vec4 position;
+
 // Ouput data
 out vec3 color;
 
 void main()
 {
-
-	// Output color = green 
-	color = vec3(0,1,0);
-
+	float red = 0;
+	float green = 0;
+	float blue = 0;
+	
+	green= position.y+0.5;
+	if(position.x<-0.5 || position.x>0.5)red = 1-green;
+	else blue = 1-green;
+		
+		
+	color = vec3(red,green,blue);
 }
