@@ -10,6 +10,7 @@
 using namespace std;
 const GLint WIDTH = 800, HEIGHT = 600;
 bool WIDEFRAME = true;
+float opacity = 0.5f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
@@ -70,13 +71,6 @@ int main() {
 
 	// Definir el buffer de vertices
 	GLfloat cubeVertex[] = 
-	//{
-	//	// Positions        
-	//	0.5f,  0.5f, 0.0f,   // Top Right
-	//	0.5f, -0.5f, 0.0f,   // Bottom Right
-	//	-0.5f, -0.5f, 0.0f,  // Bottom Left
-	//	-0.5f,  0.5f, 0.0f, // Top Left 
-	//};
 	{
 		// Positions          // Colors           // Texture Coords
 		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
@@ -91,18 +85,43 @@ int main() {
 		2,3,0
 	};
 
-	//Definir variables imagen
-	GLuint texture;
+	//crear textura en opengl
+	GLuint texture,texture2;
+	glGenTextures(1, &texture);
+	glGenTextures(1, &texture2);
+
+	//enllaça la textures 
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, texture2);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	//Cargar imagen
-	int width, height;
-	unsigned char* image = SOIL_load_image("texture.png",&width, &height,0,SOIL_LOAD_RGB);
 
+	int width, height,width2,height2;
+	unsigned char* image;
+	unsigned char* image2;
+
+	image = SOIL_load_image("./src/texture.png", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-
 	SOIL_free_image_data(image);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	image2 = SOIL_load_image("./src/texture2.png", &width2, &height2, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
+	SOIL_free_image_data(image2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
 
 	// Crear los VBO, VAO y EBO
 	GLuint VBO, VAO, EBO;
@@ -124,11 +143,20 @@ int main() {
 		//Establecer las propiedades de los vertices
 		glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertex), cubeVertex, GL_STATIC_DRAW);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexBufferObject), IndexBufferObject, GL_STATIC_DRAW);
+		
+		//Vertex
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		//Colors
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(1);
+
+		//Coordenada Textura
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
 
-		/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (GLvoid*)0);
-		glEnableVertexAttribArray(0);*/
+		
 
 		//liberar el buffer
 	//liberar el buffer de vertices
@@ -150,13 +178,24 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		
-		//establecer el shader
-
+		//Passem textures
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		programID.USE();
-		glBindVertexArray(VAO);
+		glUniform1i(glGetUniformLocation(programID.Program, "text1"), 0);
 
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		glUniform1i(glGetUniformLocation(programID.Program, "text2"), 1);
+
+		//Passem l'opacitat
+		GLint op;
+		op = glGetUniformLocation(programID.Program, "opacity");
+		glUniform1f(op, opacity);
+
+
+		//establecer el shader
+		programID.USE();
+				
 
 		//pitar el VAO
 		glBindVertexArray(VAO);
@@ -191,5 +230,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			glPolygonMode(GL_FRONT, GL_FILL);
 			WIDEFRAME = true;
 		}
+	}
+	if (key == GLFW_KEY_UP && opacity <1)
+	{
+		opacity += 0.1f;
+	}
+	else if (key == GLFW_KEY_DOWN && opacity>=0)
+	{
+		opacity -= 0.1f;
 	}
 }

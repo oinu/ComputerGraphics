@@ -2,9 +2,12 @@
 
 in vec2 TexCoord;
 out vec4 color;
-uniform sampler2D ourTexture;
+uniform sampler2D text1;
+uniform sampler2D text2;
+uniform float opacity;
 
 void main(){
-    //color = texture(ourTexture, TexCoord);
-	color=vec4(1,1,1,0);
+	vec4 img = texture(text1, TexCoord);
+	vec4 img2 = texture(text2, TexCoord);
+	color= mix(img,img2,opacity);
 }
