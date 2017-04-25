@@ -1,0 +1,4 @@
+﻿  main.cpp
+c:\users\esalles\desktop\computergraphics\quadrat_textureshader\src\main.cpp(95): warning C4101: 'texture': unreferenced local variable
+  Proyecto.vcxproj -> C:\Users\esalles\Desktop\ComputerGraphics\Quadrat_TextureShader\Debug\Practica1.exe
+  Proyecto.vcxproj -> C:\Users\esalles\Desktop\ComputerGraphics\Quadrat_TextureShader\Debug\Practica1.pdb (Full PDB)
