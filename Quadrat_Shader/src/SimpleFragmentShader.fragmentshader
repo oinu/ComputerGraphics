@@ -11,10 +11,18 @@ void main()
 	float green = 0;
 	float blue = 0;
 	
-	green= position.y+0.5;
-	if(position.x<-0.5 || position.x>0.5)red = 1-green;
-	else blue = 1-green;
-		
-		
+	blue= (position.y -(-0.5))/(0.5)-(0.5);//position.y+0.5;
+	green = 1-blue;
+	
+	if(position.x<0)
+	{
+		red=(position.x-(-0.5))/((-0.9)-(-0.5));
+		green=1-red;
+	}
+	else
+	{
+		red=(position.x -0.5)/(0.9-(0.5));
+		green=1-red;
+	}
 	color = vec3(red,green,blue);
 }
