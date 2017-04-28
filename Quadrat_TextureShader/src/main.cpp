@@ -67,7 +67,7 @@ int main() {
 
 
 	//cargamos los shader
-	shader programID("./src/SimpleVertexShader.vertexshader", "./src/SimpleFragmentShader.fragmentshader");
+	shader programID("./src/TextureVertex.vertexshader", "./src/TextureFragment.fragmentshader");
 
 	// Definir el buffer de vertices
 	GLfloat cubeVertex[] = 
