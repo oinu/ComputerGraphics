@@ -1,3 +1,9 @@
 ﻿  main.cpp
-  Proyecto.vcxproj -> C:\Users\esalles\Desktop\ComputerGraphics\Quadrat_ViewMatrix\Debug\Practica1.exe
-  Proyecto.vcxproj -> C:\Users\esalles\Desktop\ComputerGraphics\Quadrat_ViewMatrix\Debug\Practica1.pdb (Full PDB)
+c:\users\oinu_\desktop\computergraphics\quadrat_viewmatrix\src\main.cpp(336): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\oinu_\desktop\computergraphics\quadrat_viewmatrix\src\main.cpp(341): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\oinu_\desktop\computergraphics\quadrat_viewmatrix\src\main.cpp(346): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\oinu_\desktop\computergraphics\quadrat_viewmatrix\src\main.cpp(351): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\oinu_\desktop\computergraphics\quadrat_viewmatrix\src\main.cpp(356): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\oinu_\desktop\computergraphics\quadrat_viewmatrix\src\main.cpp(361): warning C4305: '-=': truncation from 'double' to 'float'
+  Proyecto.vcxproj -> C:\Users\oinu_\Desktop\ComputerGraphics\Quadrat_ViewMatrix\Debug\Practica1.exe
+  Proyecto.vcxproj -> C:\Users\oinu_\Desktop\ComputerGraphics\Quadrat_ViewMatrix\Debug\Practica1.pdb (Full PDB)

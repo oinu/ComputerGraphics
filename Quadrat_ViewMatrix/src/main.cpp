@@ -31,21 +31,28 @@ public:
 	glm::vec3 cameraPos;
 	glm::vec3 cameraFront;
 	glm::vec3 cameraUp;
+	glm::mat4 viewMatrix;
 
 	Camera()
 	{
 		projection = glm::perspective(FOV, aspectRatio, near, far);
-		cameraPos = glm::vec3(0.01f, 0.0f, 1.5f);
-		cameraFront=glm::vec3(0.0f, 0.0f, 0.0f);
-
-		/*glm::vec3 cameraDirection = glm::normalize(cCameraPos - cCameraFront);
-		glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
-		glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-		cCameraUp = glm::cross(cameraDirection, cameraRight);
-		cViewMatrix = glm::lookAt(cCameraPos, cCameraFront, cCameraUp);*/
+		cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
+		cameraFront=glm::vec3(5.0f, 1.0f, 1.0f);
+		CalculateViewMatrix();
+		
+	}
+	void CalculateViewMatrix()
+	{
+		cout<<cameraPos.x<<"	" << cameraPos.y << "	" << cameraPos.z <<endl;
+		glm::vec3 cameraDirection = normalize(cameraPos - cameraFront);
+		vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+		vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+		cameraUp = glm::cross(cameraDirection, cameraRight);
+		viewMatrix = lookAt(cameraPos, cameraFront, cameraUp);
 	}
 };
-
+//Camera
+Camera camera;
 int main() {
 	//initGLFW
 //TODO
@@ -109,13 +116,29 @@ int main() {
 		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
 		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
 		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left 
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,  // Top Left 
+
+		// Positions          // Colors           // Texture Coords
+		0.5f,  0.5f, -1.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
+		0.5f, -0.5f, -1.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
+		-0.5f, -0.5f, -1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
+		-0.5f,  0.5f, -1.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left 
 	};
 
 	// Definir el EBO
 	GLuint IndexBufferObject[]{
 		0,1,2,
-		2,3,0
+		2,3,0,
+		4,5,1,
+		1,0,4,
+		7,6,5,
+		5,4,7,
+		3,2,6,
+		6,7,3,
+		4,0,3,
+		3,7,4,
+		6,5,1,
+		1,2,6
 	};
 
 	//crear textura en opengl
@@ -189,8 +212,7 @@ int main() {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
 
-		//Camera
-		Camera camera;
+		
 		
 
 	//bucle de dibujado
@@ -201,17 +223,17 @@ int main() {
 		mat4 model = mat4(1.0);
 		model = translate(model, vec3(0.5f, 0.5f, 0.0f));
 
-		if (girDreta)
-		{
+		//if (girDreta)
+		//{
 			model = rotate(model, radians(mangle), vec3(0.0, 1.0, 0.0));
-		}
+			mangle += 1;
+		//}
 		if (girEsquerra)
 		{
 			model = rotate(model, radians(mangle), vec3(0.0, -1.0, 0.0));
 		}
 
 		model = scale(model, vec3(0.5, 0.5, 0.0));
-
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
@@ -241,6 +263,7 @@ int main() {
 
 		glUniformMatrix4fv(glGetUniformLocation(programID.Program, "transform"),1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(programID.Program, "projection"), 1, GL_FALSE, glm::value_ptr(camera.projection));
+		glUniformMatrix4fv(glGetUniformLocation(programID.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.viewMatrix));
 
 
 		//establecer el shader
@@ -271,7 +294,7 @@ int main() {
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	//TODO, comprobar que la tecla pulsada es escape para cerrar la aplicación y la tecla w para cambiar a modo widwframe
 	//W
-	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+	/*if (key == GLFW_KEY_W && action == GLFW_PRESS) {
 		if (WIDEFRAME == true) {
 			glPolygonMode(GL_FRONT, GL_LINE);
 			WIDEFRAME = false;
@@ -280,7 +303,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			glPolygonMode(GL_FRONT, GL_FILL);
 			WIDEFRAME = true;
 		}
-	}
+	}*/
 	if (key == GLFW_KEY_UP && opacity <1)
 	{
 		opacity += 0.1f;
@@ -306,5 +329,36 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		girEsquerra = false;
 		girDreta = false;
+	}
+
+	if (key == GLFW_KEY_W)
+	{
+		camera.cameraFront.x += 0.1;
+		camera.CalculateViewMatrix();
+	}
+	if (key == GLFW_KEY_S)
+	{
+		camera.cameraFront.x -= 0.1;
+		camera.CalculateViewMatrix();
+	}
+	if (key == GLFW_KEY_D)
+	{
+		camera.cameraFront.y += 0.1;
+		camera.CalculateViewMatrix();
+	}
+	if (key == GLFW_KEY_A)
+	{
+		camera.cameraFront.y -= 0.1;
+		camera.CalculateViewMatrix();
+	}
+	if (key == GLFW_KEY_E)
+	{
+		camera.cameraFront.y += 0.1;
+		camera.CalculateViewMatrix();
+	}
+	if (key == GLFW_KEY_Q)
+	{
+		camera.cameraFront.y -= 0.1;
+		camera.CalculateViewMatrix();
 	}
 }
